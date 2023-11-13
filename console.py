@@ -98,7 +98,14 @@ class HBNBCommand(cmd.Cmd):
         """Usage: show <class> <id> or <class>.show(<id>)
         Display the string representation of a class instance of a given id.
         """
-        class_name, instance_id = parse(arg)
+
+        parsed_args = parse(arg)
+
+        if not parsed_args or len(parsed_args) != 2:
+            print("** invalid format. Usage: show <class> <id> or <class>.show(<id>) **")
+            return
+
+        class_name, instance_id = parsed_args
 
         if not class_name:
             print("** class name missing **")
@@ -122,7 +129,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
         elif len(args_value) == 1:
             print("** instance id missing **")
-        elif "{}.{}".format(argl[0], args_value[1]) not in serialized_objects.keys():
+        elif "{}.{}".format(args_value[0], args_value[1]) not in serialized_objects.keys():
             print("** no instance found **")
         else:
             del serialized_objects["{}.{}".format(args_value[0], args_value[1])]
@@ -179,7 +186,7 @@ class HBNBCommand(cmd.Cmd):
             return False
 
         instance_id_str = str(instance_id) if instance_id else None
-        instance_key = "{}.{}".format(class_name, instance_id)
+        instance_key = "{}.{}".format(class_name, instance_id) if instance_id is not None else class_name
         if instance_key not in serialized_objects.keys():
             print("** no instance found **")
             return False
